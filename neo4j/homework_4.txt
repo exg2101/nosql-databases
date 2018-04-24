@@ -1,7 +1,89 @@
-// The scenario you have used for your schema is:
+// The scenario you have used for your schema is: some of the relationships from Harry Potter (at the end of the series)
 
 
-// This is an example. Your own commands should *not* be commented out so we can pipe the file into the cypher-shell.
-// If you'd like to test your commands, you can run 'cat homework_4.txt | cypher-shell -u neo4j -p test' from
-// the vagrant box command line. Make sure neo4j is running first.
-// CREATE (a:person { name: 't' });
+CREATE (n:Person { name: 'Harry Potter', house: 'Gryffindor' });
+CREATE (n:Person { name: 'Hermione Granger', house: 'Gryffindor' });
+CREATE (n:Person { name: 'Ron Weasley', house: 'Gryffindor' });
+CREATE (n:Person { name: 'Viktor Krum', house: '' });
+CREATE (n:Person { name: 'Ginny Weasley', house: 'Gryffindor' });
+CREATE (n:Person { name: 'Lily Potter', house: 'Gryffindor' });
+CREATE (n:Person { name: 'Severus Snape', house: 'Slytherin' });
+CREATE (n:Person { name: 'Albus Dumbledore', house: 'Gryffindor' });
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Harry Potter' AND b.name = 'Ginny Weasley'
+CREATE (a)-[r:married_to]->(b);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Harry Potter' AND b.name = 'Ginny Weasley'
+CREATE (b)-[r:married_to]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Harry Potter' AND b.name = 'Ron Weasley'
+CREATE (a)-[r:friend_of { since: 1991 }]->(b);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Harry Potter' AND b.name = 'Ron Weasley'
+CREATE (b)-[r:friend_of { since: 1991 }]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Harry Potter' AND b.name = 'Hermione Granger'
+CREATE (a)-[r:friend_of { since: 1991 }]->(b);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Harry Potter' AND b.name = 'Hermione Granger'
+CREATE (b)-[r:friend_of { since: 1991 }]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Harry Potter' AND b.name = 'Lily Potter'
+CREATE (a)-[r:son_of { since: 1980 }]->(b);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Harry Potter' AND b.name = 'Lily Potter'
+CREATE (b)-[r:mother_of { since: 1980 }]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Harry Potter' AND b.name = 'Albus Dumbledore'
+CREATE (b)-[r:mentor_of]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Severus Snape' AND b.name = 'Albus Dumbledore'
+CREATE (a)-[r:confides_in]->(b);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Severus Snape' AND b.name = 'Albus Dumbledore'
+CREATE (b)-[r:boss_of]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Severus Snape' AND b.name = 'Lily Potter'
+CREATE (a)-[r:loves]->(b);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Hermione Granger' AND b.name = 'Ron Weasley'
+CREATE (a)-[r:married_to]->(b);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Hermione Granger' AND b.name = 'Ron Weasley'
+CREATE (b)-[r:married_to]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Hermione Granger' AND b.name = 'Viktor Krum'
+CREATE (b)-[r:crush_on]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Ron Weasley' AND b.name = 'Viktor Krum'
+CREATE (a)-[r:rival_of]->(b);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Ron Weasley' AND b.name = 'Ginny Weasley'
+CREATE (a)-[r:brother_of { since: 1981 }]->(b);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Ron Weasley' AND b.name = 'Ginny Weasley'
+CREATE (b)-[r:sister_of { since: 1981 }]->(a);
+
+MATCH (a:Person)-[r:married_to]->(b:Person)
+RETURN a.name, collect(b.name), r;
+
+MATCH (a:Person)-[r:friend_of]->(b:Person)
+RETURN a.name, collect(b.name), r, r.since;
